@@ -16,12 +16,17 @@ def test_abbreviate_on_words():
 
 
 def test_abbreviate_phrase_in_middle():
-    assert abbrev_phrase_in_middle("Hello, World! This is a test.", 16) == "Hello, … a test."
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 23) == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 16)
+        == "Hello, … a test."
     )
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 27) == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 23)
+        == "Hello, … This is a test."
+    )
+    assert (
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 27)
+        == "Hello, … This is a test."
     )
     assert (
         abbrev_phrase_in_middle("Hello, World! This is a test.", 40)

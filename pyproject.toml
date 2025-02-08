@@ -2,7 +2,7 @@
 name = "prettyfmt"
 # Keep this a dev version, as the dynamic versioning plugin is used for actual release versions:
 version = "0.0.0.dev"
-description = "_changeme_"
+description = "A tiny library to make your outputs more beautiful"
 authors = ["Joshua Levy <joshua@cal.berkeley.edu>"]
 readme = "README.md"
 license = "MIT"
