@@ -7,4 +7,4 @@ It offers simple but general functions for formatting and abbreviating
 objects and dataclasses, dicts, words and phrases, filenames, titles, long
 strings, timestamps, ages, and sizes.
 
-Only deps are `humanize` and `strif`.
+Only deps are `humanize`, `humanfriendly`, and `strif`.
