@@ -128,15 +128,11 @@ def abbrev_obj(
     visited.add(id(value))
 
     if isinstance(value, list):
-        truncated_list = value[:list_max_len] + (
-            ["…"] if len(value) > list_max_len else []
-        )
+        truncated_list = value[:list_max_len] + (["…"] if len(value) > list_max_len else [])
         return (
             "["
             + ", ".join(
-                abbrev_obj(
-                    item, field_max_len, list_max_len, key_filter, value_filter, visited
-                )
+                abbrev_obj(item, field_max_len, list_max_len, key_filter, value_filter, visited)
                 for item in truncated_list
             )
             + "]"
@@ -152,11 +148,7 @@ def abbrev_obj(
         )
 
     if isinstance(value, dict):
-        return (
-            "{"
-            + _format_kvs(value.items(), field_max_len, key_filter, value_filter)
-            + "}"
-        )
+        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"
 
     if isinstance(value, Enum):
         return value.name
@@ -168,10 +160,11 @@ def _trim_trailing_punctuation(text: str) -> str:
     return re.sub(r"[.,;:!?]+$", "", text)
 
 
-def abbrev_on_words(text: str, max_len: int, indicator: str = "…") -> str:
+def abbrev_on_words(text: str, max_len: int = 64, indicator: str = "…") -> str:
     """
-    Abbreviate text to a maximum length, breaking on whole words (unless the first word
-    is too long). For aesthetics, removes trailing punctuation from the last word.
+    Abbreviate text to a maximum character length, breaking on whole words
+    (unless the first word is too long). For aesthetics, removes trailing
+    punctuation from the last word.
     """
     if len(text) <= max_len:
         return text
@@ -180,21 +173,19 @@ def abbrev_on_words(text: str, max_len: int, indicator: str = "…") -> str:
     if words and max_len and len(words[0]) > max_len:
         return abbrev_str(words[0], max_len, indicator)
 
-    while (
-        words
-        and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len
-    ):
+    while words and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len:
         words.pop()
 
     return _trim_trailing_punctuation(" ".join(words)) + indicator
 
 
 def abbrev_phrase_in_middle(
-    phrase: str, max_len: int, ellipsis="…", max_trailing_len: int = 0
+    phrase: str, max_len: int = 64, ellipsis="…", max_trailing_len: int = 0
 ) -> str:
     """
-    Abbreviate a phrase to a maximum length, preserving the first and last few words of
-    the phrase whenever possible. The ellipsis is inserted in the middle of the phrase.
+    Abbreviate a phrase to a maximum character length, preserving the first and last
+    few words of the phrase whenever possible. The ellipsis is inserted in the middle
+    of the phrase.
     """
     if not max_trailing_len:
         max_trailing_len = min(int(max_len / 2), max(16, int(max_len / 4)))
@@ -214,10 +205,7 @@ def abbrev_phrase_in_middle(
     # Walk through the split words, and tally total number of chars as we go.
     for i in range(len(words)):
         words[i] = abbrev_str(words[i], max_len, ellipsis)
-        if (
-            prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len
-            and i > 0
-        ):
+        if prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len and i > 0:
             prefix_end_index = i
             break
         prefix_tally += len(words[i]) + 1
@@ -377,3 +365,19 @@ def fmt_paras(*paras: str | None, sep: str = "\n\n") -> str:
     """
     filtered_paras = [para.strip() for para in paras if para is not None]
     return sep.join(para for para in filtered_paras if para)
+
+
+DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+“”‘’…–—-"
+
+
+def sanitize_title(text: str, allowed_chars: str = DEFAULT_PUNCTUATION) -> str:
+    """
+    Simple sanitization for arbitrary text to make it suitable for a title or filename.
+    Convert all whitespace to spaces. By default allows the most common punctuation,
+    letters, and numbers, but not Markdown chars like `*` or `[]`, code characters, etc.
+    """
+    # Note \w and \d should now be pretty good for common Unicode letters and digits.
+    # If we had the regex package on hand we could use \p{L}\p{N} instead of \w\d
+    # but probably not worth the import.
+    escaped_chars = re.escape(allowed_chars)
+    return re.sub(r"[^\w\d" + escaped_chars + "]+", " ", text).strip()

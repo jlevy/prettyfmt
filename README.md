@@ -9,12 +9,29 @@ strings, timestamps, ages, and sizes.
 
 Simply a more convenient wrapper around `humanize`, `humanfriendly`, and `strif`.
 
+## Installation
+
+```
+# Use pip
+pip install prettyfmt
+# Or poetry
+poetry add prettyfmt
+```
+
+## Usage
+
 ```python
 from prettyfmt import *
+
+abbrev_str("very " * 100 + "long", 32)
+🢂 'very very very very very very v…'
 
 # Simple abbreviations of objects:
 abbrev_obj({"a": "very " * 100 + "long", "b": 23})
 🢂 "{a='very very very very very very very very very very very very ver…', b=23}"
+
+abbrev_obj(["word " * i for i in range(10)], field_max_len=10, list_max_len=4)
+🢂 "['', 'word ', 'word word ', 'word word…', …]"
 
 # Abbreviate but don't break words. Combine with slugifiers.
 abbrev_on_words("very " * 100 + "long", 30)
@@ -23,7 +40,16 @@ abbrev_on_words("very " * 100 + "long", 30)
 # My favorite, very good for abbreviating a long title to get a shorter one,
 # or good filename.
 abbrev_phrase_in_middle("very " * 100 + "long", 40)
-🢂 'very very very very … very very very long'
+🢂 'very very very v
+
+# Useful for cleaning up document titles and filenames.
+ugly_title = "A  Very\tVery Very Needlessly Long  {Strange} Document Title [final edited draft23]"
+abbrev_phrase_in_middle(sanitize_title(ugly_title))
+🢂 'A Very Very Very Needlessly Long Strange … final edited draft23'
+
+from slugify import slugify
+slugify(abbrev_phrase_in_middle(sanitize_title(ugly_title)))
+🢂 'a-very-very-very-needlessly-long-strange-final-edited-draft23'
 
 # Ages in seconds or deltas.
 fmt_age(60 * 60 * 24 * 23)

@@ -1,4 +1,9 @@
-from prettyfmt import abbrev_on_words, abbrev_phrase_in_middle, fmt_words
+from prettyfmt import (
+    abbrev_on_words,
+    abbrev_phrase_in_middle,
+    fmt_words,
+    sanitize_title,
+)
 
 
 def test_abbreviate_on_words():
@@ -16,17 +21,12 @@ def test_abbreviate_on_words():
 
 
 def test_abbreviate_phrase_in_middle():
+    assert abbrev_phrase_in_middle("Hello, World! This is a test.", 16) == "Hello, … a test."
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 16)
-        == "Hello, … a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 23) == "Hello, … This is a test."
     )
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 23)
-        == "Hello, … This is a test."
-    )
-    assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 27)
-        == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 27) == "Hello, … This is a test."
     )
     assert (
         abbrev_phrase_in_middle("Hello, World! This is a test.", 40)
@@ -69,3 +69,12 @@ def test_fmt_words():
     assert fmt_words("Hello", "   ", "World", sep="---") == "Hello---   ---World"
     assert fmt_words("Hello", "World", sep=" | ") == "Hello | World"
     assert fmt_words(" Hello ", " ", " World ") == " Hello World "
+
+
+def test_sanitize_title():
+    assert sanitize_title("Hello, World!") == "Hello, World!"
+    assert sanitize_title("Hej, Världen!") == "Hej, Världen!"
+    assert sanitize_title("你好 世界") == "你好 世界"
+    assert sanitize_title("こんにちは、世界") == "こんにちは 世界"
+    assert sanitize_title(" *Hello,*  \n\tWorld!  --123@:': ") == "Hello, World! --123@:':"
+    assert sanitize_title("<script foo='blah'><p>") == "script foo 'blah' p"
