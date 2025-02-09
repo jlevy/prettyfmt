@@ -14,7 +14,7 @@ def is_not_none(value: Any) -> bool:
     return value is not None
 
 
-KeyFilter = Callable[[Any], int] | Dict[Any, int]
+KeyFilter = Callable[[Any], int | None] | Dict[Any, int | None]
 """
 A dict or callable that returns the max allowed length of each key,
 or 0 to allow any length, or None to omit the key. The dict form of
@@ -53,7 +53,7 @@ def _format_kvs(
             if callable(key_filter):
                 max_len = key_filter(k)
             else:
-                max_len = key_filter.get(k, 0)
+                max_len = key_filter.get(k, None)
             if max_len is None:
                 continue
             field_max_len = max_len

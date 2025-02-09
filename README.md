@@ -99,6 +99,7 @@ class MyThing:
       return abbrev_obj(
             self,
             # Put an abbreviated title first, then the file path, then the url.
+            # The `body` field will be omitted.
             key_filter={
                "title": 64,
                "file_path": 0,
