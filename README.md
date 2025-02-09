@@ -1,13 +1,16 @@
 # prettyfmt
 
-`prettyfmt` is a tiny library to make your outputs, logs, and
-`__str__()` representations slightly more beautiful.
+`prettyfmt` is a tiny library to make your outputs, logs, and `__str__()`
+representations slightly more beautiful.
 
-It offers simple but general functions for formatting and abbreviating
-objects and dataclasses, dicts, words and phrases, filenames, titles, long
-strings, timestamps, ages, and sizes.
+It offers simple but general functions for formatting and abbreviating objects and
+dataclasses, dicts, words and phrases, filenames, titles, long strings, timestamps,
+ages, and sizes.
 
-Simply a more convenient wrapper around `humanize`, `humanfriendly`, and `strif`.
+Basically it's just a tiny set of convenience functions for
+[`humanize`](https://github.com/python-humanize/humanize),
+[`humanfriendly`](https://github.com/xolox/python-humanfriendly), and
+[`strif`](https://github.com/jlevy/strif).
 
 ## Installation
 
@@ -20,11 +23,11 @@ poetry add prettyfmt
 
 ## Usage
 
+See [pydoc](https://github.com/jlevy/prettyfmt/blob/main/src/prettyfmt/prettyfmt.py) for
+details on all functions.
+
 ```python
 from prettyfmt import *
-
-abbrev_str("very " * 100 + "long", 32)
-🢂 'very very very very very very v…'
 
 # Simple abbreviations of objects:
 abbrev_obj({"a": "very " * 100 + "long", "b": 23})
@@ -33,20 +36,27 @@ abbrev_obj({"a": "very " * 100 + "long", "b": 23})
 abbrev_obj(["word " * i for i in range(10)], field_max_len=10, list_max_len=4)
 🢂 "['', 'word ', 'word word ', 'word word…', …]"
 
-# Abbreviate but don't break words. Combine with slugifiers.
+# Abbreviate by character length.
+abbrev_str("very " * 100 + "long", 32)
+🢂 'very very very very very very v…'
+
+# Abbreviate by character length but don't break words.
 abbrev_on_words("very " * 100 + "long", 30)
 🢂 'very very very very very very…'
 
-# My favorite, very good for abbreviating a long title to get a shorter one,
-# or good filename.
+# My favorite, abbreviate but don't break words and keep a few words
+# on the end since they might be useful.
 abbrev_phrase_in_middle("very " * 100 + "long", 40)
-🢂 'very very very v
+🢂 'very very very very … very very very long'
 
-# Useful for cleaning up document titles and filenames.
+# This makes it very handy for cleaning up document titles.
 ugly_title = "A  Very\tVery Very Needlessly Long  {Strange} Document Title [final edited draft23]"
+🢂 sanitize_title(ugly_title)
+'A Very Very Very Needlessly Long Strange Document Title final edited draft23'
 abbrev_phrase_in_middle(sanitize_title(ugly_title))
 🢂 'A Very Very Very Needlessly Long Strange … final edited draft23'
 
+# Then you can slugify to get nice filenames or URLs.
 from slugify import slugify
 slugify(abbrev_phrase_in_middle(sanitize_title(ugly_title)))
 🢂 'a-very-very-very-needlessly-long-strange-final-edited-draft23'
@@ -91,7 +101,4 @@ class MyThing:
                "url": 128,
             },
       )
-
 ```
-
-See pydoc for details.
