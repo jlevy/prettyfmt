@@ -7,7 +7,8 @@ It offers simple but general functions for formatting and abbreviating objects a
 dataclasses, dicts, words and phrases, filenames, titles, long strings, timestamps,
 ages, and sizes.
 
-Basically it's just a set of tiny convenience wrappers for
+It won't bloat your project.
+It's <500 lines of code with just two dependencies:
 [`humanize`](https://github.com/python-humanize/humanize) and
 [`strif`](https://github.com/jlevy/strif).
 
@@ -105,3 +106,8 @@ class MyThing:
             },
       )
 ```
+
+* * *
+
+*This project was built from
+[simple-modern-poetry](https://github.com/jlevy/simple-modern-poetry).*
