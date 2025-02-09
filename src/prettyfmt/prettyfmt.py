@@ -4,8 +4,7 @@ from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, TypeVar
 
-import humanfriendly
-from humanize import naturalsize
+from humanize import naturalsize, precisedelta
 
 from strif import abbrev_str, quote_if_needed
 
@@ -234,19 +233,49 @@ def abbrev_phrase_in_middle(
 
 def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
     """
-    Format a time delta as an age, e.g. "2d ago".
+    Format a time delta as a simple age with a single unit, e.g. "2d ago" (brief)
+    or "2 days ago" (not brief).
+
+    Unlike `humanize.naturaldelta()`, we use only a single unit (seconds, minutes, hours,
+    days, months, years). When the first unit is a 1, we don't use that unit, e.g.
+    we give "27 hours" instead of "1 day and 3 hours". And we don't use decimals.
     """
     if isinstance(since_time, timedelta):
-        seconds = since_time.total_seconds()
+        seconds = int(since_time.total_seconds())
     else:
-        seconds = since_time
-    seconds = humanfriendly.coerce_seconds(seconds)
-    # Don't log fractions of a second (humanfriendly does this by default).
-    seconds = round(seconds)
+        seconds = int(since_time)
+
+    # Suppress all units except the largest one we want to show
+
+    min_first_unit = 2
+    minute = 60
+    hour = 3600
+    day = 86400
+    month = 86400 * 30
+    year = 86400 * 365
+    if seconds <= min_first_unit * minute:
+        suppress = ["minutes"]
+        min_unit = "seconds"
+    elif seconds <= min_first_unit * hour:
+        suppress = ["hours"]
+        min_unit = "minutes"
+    elif seconds <= min_first_unit * day:
+        suppress = ["days"]
+        min_unit = "hours"
+    elif seconds <= min_first_unit * month:
+        suppress = ["months"]
+        min_unit = "days"
+    elif seconds <= min_first_unit * year:
+        suppress = ["years"]
+        min_unit = "months"
+    else:
+        suppress = []
+        min_unit = "years"
+
     if brief:
-        agestr = (
-            humanfriendly.format_timespan(seconds, detailed=False, max_units=1)
-            .replace(" seconds", "s")
+        age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%.0f")
+        age = (
+            age.replace(" seconds", "s")
             .replace(" second", "s")
             .replace(" minutes", "m")
             .replace(" minute", "m")
@@ -260,11 +289,12 @@ def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
             .replace(" month", "mo")
             .replace(" years", "y")
             .replace(" year", "y")
+            .replace("a ", "1")  # Convert "a minute" to "1m" etc.
         )
     else:
-        agestr = humanfriendly.format_timespan(since_time, detailed=False, max_units=2)
+        age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f")
 
-    return agestr + " ago"
+    return age + " ago"
 
 
 def fmt_time(
@@ -367,7 +397,7 @@ def fmt_paras(*paras: str | None, sep: str = "\n\n") -> str:
     return sep.join(para for para in filtered_paras if para)
 
 
-DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+“”‘’…–—-"
+DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+" "''…–—-"
 
 
 def sanitize_title(text: str, allowed_chars: str = DEFAULT_PUNCTUATION) -> str:

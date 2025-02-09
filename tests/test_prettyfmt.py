@@ -1,6 +1,7 @@
 from prettyfmt import (
     abbrev_on_words,
     abbrev_phrase_in_middle,
+    fmt_age,
     fmt_words,
     sanitize_title,
 )
@@ -69,6 +70,28 @@ def test_fmt_words():
     assert fmt_words("Hello", "   ", "World", sep="---") == "Hello---   ---World"
     assert fmt_words("Hello", "World", sep=" | ") == "Hello | World"
     assert fmt_words(" Hello ", " ", " World ") == " Hello World "
+
+
+def test_fmt_age():
+    assert fmt_age(1) == "1 second ago"
+    assert fmt_age(10) == "10 seconds ago"
+    assert fmt_age(100) == "100 seconds ago"
+    assert fmt_age(1000) == "17 minutes ago"
+    assert fmt_age(10000) == "3 hours ago"
+    assert fmt_age(100000) == "28 hours ago"
+    assert fmt_age(1000000) == "12 days ago"
+    assert fmt_age(10000000) == "4 months ago"
+    assert fmt_age(100000000) == "3 years ago"
+    assert fmt_age(1000000000) == "32 years ago"
+
+    assert fmt_age(1, brief=True) == "1s ago"
+    assert fmt_age(10, brief=True) == "10s ago"
+    assert fmt_age(100, brief=True) == "100s ago"
+    assert fmt_age(1000, brief=True) == "17m ago"
+    assert fmt_age(10000, brief=True) == "3h ago"
+    assert fmt_age(100000, brief=True) == "28h ago"
+    assert fmt_age(1000000, brief=True) == "12d ago"
+    assert fmt_age(10000000, brief=True) == "4mo ago"
 
 
 def test_sanitize_title():

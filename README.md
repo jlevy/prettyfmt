@@ -7,9 +7,8 @@ It offers simple but general functions for formatting and abbreviating objects a
 dataclasses, dicts, words and phrases, filenames, titles, long strings, timestamps,
 ages, and sizes.
 
-Basically it's just a tiny set of convenience functions for
-[`humanize`](https://github.com/python-humanize/humanize),
-[`humanfriendly`](https://github.com/xolox/python-humanfriendly), and
+Basically it's just a set of tiny convenience wrappers for
+[`humanize`](https://github.com/python-humanize/humanize) and
 [`strif`](https://github.com/jlevy/strif).
 
 ## Installation
@@ -62,11 +61,15 @@ slugify(abbrev_phrase_in_middle(sanitize_title(ugly_title)))
 🢂 'a-very-very-very-needlessly-long-strange-final-edited-draft23'
 
 # Ages in seconds or deltas.
-fmt_age(60 * 60 * 24 * 23)
-🢂 '3 weeks and 2 days ago'
+# Note we use a sensible single numeral to keep things brief, e.g.
+# "33 days ago" and not the messier "1 month and 3 days ago".
+# This is important in file listings, etc, where we want to optimize
+# for space and legibility.
+fmt_age(60 * 60 * 24 * 33)
+🢂 '33 days ago'
 
-fmt_age(60 * 60 *24 * 23, brief=True)
-🢂 '3w ago'
+fmt_age(60 * 60 * 24 * 33, brief=True)
+🢂 '33d ago'
 
 # Sizes
 fmt_size_human(12000000)
