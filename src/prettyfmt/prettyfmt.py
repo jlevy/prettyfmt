@@ -1,7 +1,9 @@
+from pathlib import Path
 import re
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from textwrap import indent
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, TypeVar
 
 from humanize import naturalsize, precisedelta
@@ -395,6 +397,44 @@ def fmt_paras(*paras: str | None, sep: str = "\n\n") -> str:
     """
     filtered_paras = [para.strip() for para in paras if para is not None]
     return sep.join(para for para in filtered_paras if para)
+
+
+def fmt_lines(
+    values: Iterable[Any], prefix: str = "    ", line_break: str = "\n", max: int = 0
+) -> str:
+    """
+    Simple of values one per line, optionally prefixed or indented. If `max` is set,
+    cap at that number of items and indicate how many more were omitted.
+    """
+    values = list(values)
+    if max > 0 and max < len(values):
+        remaining = len(values) - max
+        values = values[:max]
+        values.append(f"… ({remaining} more items)")
+    return indent(line_break.join(str(value) for value in values), prefix).rstrip()
+
+
+def fmt_path(path: str | Path, resolve: bool = True) -> str:
+    """
+    Format a path or filename for display. This quotes it if it contains whitespace,
+    using Python conventions: `my long path.txt` is formatted as `'my long path.txt'`.
+
+    :param resolve: If true paths are resolved. If they are within the current working
+    directory, they are formatted as relative. Otherwise, they are formatted as absolute.
+    """
+
+    # TODO: Add a max_len parameter and tools to abbreviate the path in the middle
+    # (preserving outer quotes and any extension).
+
+    if resolve:
+        path = Path(path).resolve()
+        cwd = Path.cwd().resolve()
+        if path.is_relative_to(cwd):
+            path = path.relative_to(cwd)
+    else:
+        path = Path(path)
+
+    return quote_if_needed(str(path))
 
 
 DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+" "''…–—-"
