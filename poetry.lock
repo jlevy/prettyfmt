@@ -549,14 +549,14 @@ docs = ["sphinx (==8.1.3)", "sphinx-mdinclude (==0.6.2)"]
 
 [[package]]
 name = "strif"
-version = "2.0.0rc1"
+version = "2.0.0"
 description = "Tiny, useful Python lib for strings and files."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "strif-2.0.0rc1-py3-none-any.whl", hash = "sha256:836e66fd239bcaa066369e2b2785a74a1756e48c1c1fa3adb85a51f53e27a5e3"},
-    {file = "strif-2.0.0rc1.tar.gz", hash = "sha256:52dc50ab9d10f43bc5052a5f9907fc3dc196da0055885daf765e447dd08cc9bf"},
+    {file = "strif-2.0.0-py3-none-any.whl", hash = "sha256:04c8c3f28bb169f6190bace6d7de11b137629c0cc70913a949bff16473290d61"},
+    {file = "strif-2.0.0.tar.gz", hash = "sha256:f3bdf33dd8cdcb4e899313e800ff3f71c842a82cfcfc4359e11b0690020e490e"},
 ]
 
 [[package]]
@@ -669,4 +669,4 @@ trailrunner = ">=1.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "450b8cb3acb99e72e7843b431ec8a3fe80b1a27f4d60784f2f1ca6654c8e861b"
+content-hash = "ecbfc9c06238b969cddeb931f7631420e56b637fb2df545d82f2414cc31f19da"
