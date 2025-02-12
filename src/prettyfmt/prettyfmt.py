@@ -1,8 +1,8 @@
-from pathlib import Path
 import re
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from pathlib import Path
 from textwrap import indent
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, TypeVar
 
@@ -41,6 +41,13 @@ def custom_key_sort(priority_keys: List[T]) -> Callable[[T], Any]:
             return (float("inf"), key)
 
     return sort_func
+
+
+minute = 60
+hour = 3600
+day = 86400
+month = 86400 * 30
+year = 86400 * 365
 
 
 def _format_kvs(
@@ -129,11 +136,15 @@ def abbrev_obj(
     visited.add(id(value))
 
     if isinstance(value, list):
-        truncated_list = value[:list_max_len] + (["…"] if len(value) > list_max_len else [])
+        truncated_list = value[:list_max_len] + (
+            ["…"] if len(value) > list_max_len else []
+        )
         return (
             "["
             + ", ".join(
-                abbrev_obj(item, field_max_len, list_max_len, key_filter, value_filter, visited)
+                abbrev_obj(
+                    item, field_max_len, list_max_len, key_filter, value_filter, visited
+                )
                 for item in truncated_list
             )
             + "]"
@@ -149,7 +160,11 @@ def abbrev_obj(
         )
 
     if isinstance(value, dict):
-        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"
+        return (
+            "{"
+            + _format_kvs(value.items(), field_max_len, key_filter, value_filter)
+            + "}"
+        )
 
     if isinstance(value, Enum):
         return value.name
@@ -174,7 +189,10 @@ def abbrev_on_words(text: str, max_len: int = 64, indicator: str = "…") -> str
     if words and max_len and len(words[0]) > max_len:
         return abbrev_str(words[0], max_len, indicator)
 
-    while words and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len:
+    while (
+        words
+        and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len
+    ):
         words.pop()
 
     return _trim_trailing_punctuation(" ".join(words)) + indicator
@@ -206,7 +224,10 @@ def abbrev_phrase_in_middle(
     # Walk through the split words, and tally total number of chars as we go.
     for i in range(len(words)):
         words[i] = abbrev_str(words[i], max_len, ellipsis)
-        if prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len and i > 0:
+        if (
+            prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len
+            and i > 0
+        ):
             prefix_end_index = i
             break
         prefix_tally += len(words[i]) + 1
@@ -239,43 +260,39 @@ def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
     or "2 days ago" (not brief).
 
     Unlike `humanize.naturaldelta()`, we use only a single unit (seconds, minutes, hours,
-    days, months, years). When the first unit is a 1, we don't use that unit, e.g.
-    we give "27 hours" instead of "1 day and 3 hours". And we don't use decimals.
+    days, months, years). We don't use decimals. Conform with typical human usage, and
+    say "33 days" instead of "1 month and 3 days", i.e. use seconds for less than 90 seconds,
+    minutes for less than 90 minutes, hours for less than 2 days, days for less than 2 months,
+    months for less than 2 years.
     """
     if isinstance(since_time, timedelta):
         seconds = int(since_time.total_seconds())
     else:
         seconds = int(since_time)
 
-    # Suppress all units except the largest one we want to show
-
-    min_first_unit = 2
-    minute = 60
-    hour = 3600
-    day = 86400
-    month = 86400 * 30
-    year = 86400 * 365
-    if seconds <= min_first_unit * minute:
+    if seconds <= 90:
         suppress = ["minutes"]
         min_unit = "seconds"
-    elif seconds <= min_first_unit * hour:
+    elif seconds <= 90 * minute:
         suppress = ["hours"]
         min_unit = "minutes"
-    elif seconds <= min_first_unit * day:
+    elif seconds < 2 * day:
         suppress = ["days"]
         min_unit = "hours"
-    elif seconds <= min_first_unit * month:
+    elif seconds < 2 * month:
         suppress = ["months"]
         min_unit = "days"
-    elif seconds <= min_first_unit * year:
+    elif seconds < 2 * year:
         suppress = ["years"]
         min_unit = "months"
     else:
         suppress = []
         min_unit = "years"
 
+    age = precisedelta(
+        seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f"
+    )
     if brief:
-        age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%.0f")
         age = (
             age.replace(" seconds", "s")
             .replace(" second", "s")
@@ -292,9 +309,8 @@ def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
             .replace(" years", "y")
             .replace(" year", "y")
             .replace("a ", "1")  # Convert "a minute" to "1m" etc.
+            .replace(".0", "")  # Remove trailing ".0" (corner case bug in humanize)
         )
-    else:
-        age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f")
 
     return age + " ago"
 

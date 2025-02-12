@@ -5,9 +5,14 @@ from prettyfmt import (
     abbrev_obj,
     abbrev_on_words,
     abbrev_phrase_in_middle,
+    day,
     fmt_age,
     fmt_words,
+    hour,
+    minute,
+    month,
     sanitize_title,
+    year,
 )
 
 
@@ -26,12 +31,17 @@ def test_abbreviate_on_words():
 
 
 def test_abbreviate_phrase_in_middle():
-    assert abbrev_phrase_in_middle("Hello, World! This is a test.", 16) == "Hello, … a test."
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 23) == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 16)
+        == "Hello, … a test."
     )
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 27) == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 23)
+        == "Hello, … This is a test."
+    )
+    assert (
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 27)
+        == "Hello, … This is a test."
     )
     assert (
         abbrev_phrase_in_middle("Hello, World! This is a test.", 40)
@@ -79,7 +89,7 @@ def test_fmt_words() -> None:
 def test_fmt_age() -> None:
     assert fmt_age(1) == "1 second ago"
     assert fmt_age(10) == "10 seconds ago"
-    assert fmt_age(100) == "100 seconds ago"
+    assert fmt_age(100) == "2 minutes ago"
     assert fmt_age(1000) == "17 minutes ago"
     assert fmt_age(10000) == "3 hours ago"
     assert fmt_age(100000) == "28 hours ago"
@@ -90,7 +100,7 @@ def test_fmt_age() -> None:
 
     assert fmt_age(1, brief=True) == "1s ago"
     assert fmt_age(10, brief=True) == "10s ago"
-    assert fmt_age(100, brief=True) == "100s ago"
+    assert fmt_age(100, brief=True) == "2m ago"
     assert fmt_age(1000, brief=True) == "17m ago"
     assert fmt_age(10000, brief=True) == "3h ago"
     assert fmt_age(100000, brief=True) == "28h ago"
@@ -99,13 +109,25 @@ def test_fmt_age() -> None:
     assert fmt_age(100000000, brief=True) == "3y ago"
     assert fmt_age(1000000000, brief=True) == "32y ago"
 
+    assert fmt_age(1 * minute, brief=True) == "60s ago"
+    assert fmt_age(2 * minute, brief=True) == "2m ago"
+    assert fmt_age(1 * hour, brief=True) == "60m ago"
+    assert fmt_age(90 * minute, brief=True) == "90m ago"
+    assert fmt_age(26 * hour, brief=True) == "26h ago"
+    assert fmt_age(2 * day, brief=True) == "2d ago"
+    assert fmt_age(45 * day, brief=True) == "45d ago"
+    assert fmt_age(2 * month, brief=True) == "2mo ago"
+    assert fmt_age(2 * year, brief=True) == "2y ago"
+
 
 def test_sanitize_title() -> None:
     assert sanitize_title("Hello, World!") == "Hello, World!"
     assert sanitize_title("Hej, Världen!") == "Hej, Världen!"
     assert sanitize_title("你好 世界") == "你好 世界"
     assert sanitize_title("こんにちは、世界") == "こんにちは 世界"
-    assert sanitize_title(" *Hello,*  \n\tWorld!  --123@:': ") == "Hello, World! --123@:':"
+    assert (
+        sanitize_title(" *Hello,*  \n\tWorld!  --123@:': ") == "Hello, World! --123@:':"
+    )
     assert sanitize_title("<script foo='blah'><p>") == "script foo 'blah' p"
 
 
@@ -136,5 +158,7 @@ def test_dataclass() -> None:
             "This should be skipped.",
         )
     )
-    expected = "MyThing(title='Hello, World!', file_path=~/1234567…, url=https://example.com)"
+    expected = (
+        "MyThing(title='Hello, World!', file_path=~/1234567…, url=https://example.com)"
+    )
     assert s == expected
