@@ -1,5 +1,5 @@
 import re
-from dataclasses import asdict, is_dataclass
+from dataclasses import fields, is_dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
@@ -152,7 +152,8 @@ def abbrev_obj(
 
     if is_dataclass(value) and not isinstance(value, type):
         name = type(value).__name__
-        value_dict = asdict(value)
+        # Could do asdict() here, but pydantic dataclasses can throw errors.
+        value_dict = {f.name: getattr(value, f.name) for f in fields(value)}
         return (
             f"{name}("
             + _format_kvs(value_dict.items(), field_max_len, key_filter, value_filter)
