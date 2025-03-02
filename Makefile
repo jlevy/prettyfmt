@@ -1,8 +1,11 @@
 .DEFAULT_GOAL := default
 
-.PHONY: default lint test build clean
+.PHONY: default install_deps lint test build clean
 
-default: lint test
+default: install_deps lint test
+
+install_deps:
+	poetry install
 
 lint:
 	poetry run python devtools/lint.py
@@ -19,3 +22,4 @@ clean:
 	-rm -rf .pytest_cache/
 	-rm -rf .mypy_cache/
 	-rm -rf .venv/
+	-find . -type d -name "__pycache__" -exec rm -rf {} +
