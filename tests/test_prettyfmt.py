@@ -31,17 +31,12 @@ def test_abbreviate_on_words():
 
 
 def test_abbreviate_phrase_in_middle():
+    assert abbrev_phrase_in_middle("Hello, World! This is a test.", 16) == "Hello, … a test."
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 16)
-        == "Hello, … a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 23) == "Hello, … This is a test."
     )
     assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 23)
-        == "Hello, … This is a test."
-    )
-    assert (
-        abbrev_phrase_in_middle("Hello, World! This is a test.", 27)
-        == "Hello, … This is a test."
+        abbrev_phrase_in_middle("Hello, World! This is a test.", 27) == "Hello, … This is a test."
     )
     assert (
         abbrev_phrase_in_middle("Hello, World! This is a test.", 40)
@@ -125,9 +120,7 @@ def test_sanitize_title() -> None:
     assert sanitize_title("Hej, Världen!") == "Hej, Världen!"
     assert sanitize_title("你好 世界") == "你好 世界"
     assert sanitize_title("こんにちは、世界") == "こんにちは 世界"
-    assert (
-        sanitize_title(" *Hello,*  \n\tWorld!  --123@:': ") == "Hello, World! --123@:':"
-    )
+    assert sanitize_title(" *Hello,*  \n\tWorld!  --123@:': ") == "Hello, World! --123@:':"
     assert sanitize_title("<script foo='blah'><p>") == "script foo 'blah' p"
 
 
@@ -158,7 +151,5 @@ def test_dataclass() -> None:
             "This should be skipped.",
         )
     )
-    expected = (
-        "MyThing(title='Hello, World!', file_path=~/1234567…, url=https://example.com)"
-    )
+    expected = "MyThing(title='Hello, World!', file_path=~/1234567…, url=https://example.com)"
     assert s == expected

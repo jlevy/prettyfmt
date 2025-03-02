@@ -61,10 +61,10 @@ format-jinja = """{%- if distance == 0 -%}
     {%- endif -%}"""
 
 [tool.black]
-line-length = 88
+line-length = 100
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 
 [tool.ruff.lint]
 ignore = ["E402", "E731", "E712"]

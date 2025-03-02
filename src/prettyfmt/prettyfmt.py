@@ -136,15 +136,11 @@ def abbrev_obj(
     visited.add(id(value))
 
     if isinstance(value, list):
-        truncated_list = value[:list_max_len] + (
-            ["…"] if len(value) > list_max_len else []
-        )
+        truncated_list = value[:list_max_len] + (["…"] if len(value) > list_max_len else [])
         return (
             "["
             + ", ".join(
-                abbrev_obj(
-                    item, field_max_len, list_max_len, key_filter, value_filter, visited
-                )
+                abbrev_obj(item, field_max_len, list_max_len, key_filter, value_filter, visited)
                 for item in truncated_list
             )
             + "]"
@@ -161,11 +157,7 @@ def abbrev_obj(
         )
 
     if isinstance(value, dict):
-        return (
-            "{"
-            + _format_kvs(value.items(), field_max_len, key_filter, value_filter)
-            + "}"
-        )
+        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"
 
     if isinstance(value, Enum):
         return value.name
@@ -190,10 +182,7 @@ def abbrev_on_words(text: str, max_len: int = 64, indicator: str = "…") -> str
     if words and max_len and len(words[0]) > max_len:
         return abbrev_str(words[0], max_len, indicator)
 
-    while (
-        words
-        and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len
-    ):
+    while words and len(_trim_trailing_punctuation(" ".join(words))) + len(indicator) > max_len:
         words.pop()
 
     return _trim_trailing_punctuation(" ".join(words)) + indicator
@@ -225,10 +214,7 @@ def abbrev_phrase_in_middle(
     # Walk through the split words, and tally total number of chars as we go.
     for i in range(len(words)):
         words[i] = abbrev_str(words[i], max_len, ellipsis)
-        if (
-            prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len
-            and i > 0
-        ):
+        if prefix_tally + len(words[i]) + len(ellipsis) + max_trailing_len >= max_len and i > 0:
             prefix_end_index = i
             break
         prefix_tally += len(words[i]) + 1
@@ -290,9 +276,7 @@ def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
         suppress = []
         min_unit = "years"
 
-    age = precisedelta(
-        seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f"
-    )
+    age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f")
     if brief:
         age = (
             age.replace(" seconds", "s")
