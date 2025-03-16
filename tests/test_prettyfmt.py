@@ -151,5 +151,5 @@ def test_dataclass() -> None:
             "This should be skipped.",
         )
     )
-    expected = "MyThing(title='Hello, World!', file_path=~/1234567…, url=https://example.com)"
+    expected = "MyThing(title='Hello, World!', file_path='~/1234567…', url=https://example.com)"
     assert s == expected

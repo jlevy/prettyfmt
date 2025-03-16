@@ -1,5 +1,6 @@
-from .prettyfmt import *  # noqa: F403
 from strif import abbrev_list, abbrev_str, quote_if_needed, single_line
+
+from .prettyfmt import *  # noqa: F403
 
 __all__ = (  # noqa: F405
     "abbrev_obj",

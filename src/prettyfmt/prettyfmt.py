@@ -1,13 +1,13 @@
 import re
+from collections.abc import Callable, Iterable
 from dataclasses import fields, is_dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
 from textwrap import indent
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, TypeVar
+from typing import Any, TypeVar
 
 from humanize import naturalsize, precisedelta
-
 from strif import abbrev_str, quote_if_needed
 
 
@@ -16,7 +16,7 @@ def is_not_none(value: Any) -> bool:
     return value is not None
 
 
-KeyFilter = Callable[[Any], int | None] | Dict[Any, int | None]
+KeyFilter = Callable[[Any], int | None] | dict[Any, int | None]
 """
 A dict or callable that returns the max allowed length of each key,
 or 0 to allow any length, or None to omit the key. The dict form of
@@ -27,13 +27,13 @@ a key filter can also implicitly indicate a sorting order for the keys.
 T = TypeVar("T")
 
 
-def custom_key_sort(priority_keys: List[T]) -> Callable[[T], Any]:
+def custom_key_sort(priority_keys: list[T]) -> Callable[[T], Any]:
     """
     Custom sort function that prioritizes the specific keys in a certain order,
     followed by all the other keys in natural order.
     """
 
-    def sort_func(key: T) -> Tuple[float, T]:
+    def sort_func(key: T) -> tuple[float, T]:
         try:
             i = priority_keys.index(key)
             return (float(i), key)
@@ -51,12 +51,12 @@ year = 86400 * 365
 
 
 def _format_kvs(
-    items: Iterable[Tuple[Any, Any]],
+    items: Iterable[tuple[Any, Any]],
     field_max_len: int,
-    key_filter: Optional[KeyFilter] = None,
-    value_filter: Optional[Callable[[Any], bool]] = None,
+    key_filter: KeyFilter | None = None,
+    value_filter: Callable[[Any], bool] | None = None,
 ) -> str:
-    filtered_items: List[Tuple[Any, Any]] = []
+    filtered_items: list[tuple[Any, Any]] = []
     for k, v in items:
         if key_filter is not None:
             if callable(key_filter):
@@ -91,9 +91,9 @@ def abbrev_obj(
     value: Any,
     field_max_len: int = 64,
     list_max_len: int = 32,
-    key_filter: Optional[KeyFilter] = None,
-    value_filter: Optional[Callable[[Any], bool]] = is_not_none,
-    visited: Optional[Set[Any]] = None,
+    key_filter: KeyFilter | None = None,
+    value_filter: Callable[[Any], bool] | None = is_not_none,
+    visited: set[Any] | None = None,
 ) -> str:
     """
     Helper to print an abbreviated string version of an object, with options to
@@ -305,7 +305,7 @@ def fmt_time(
     iso_time: bool = True,
     friendly: bool = False,
     brief: bool = False,
-    now: Optional[datetime] = None,
+    now: datetime | None = None,
 ) -> str:
     """
     Format a datetime for display in various formats:
@@ -438,7 +438,7 @@ def fmt_path(path: str | Path, resolve: bool = True) -> str:
     return quote_if_needed(str(path))
 
 
-DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+" "''…–—-"
+DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+…–—-"
 
 
 def sanitize_title(text: str, allowed_chars: str = DEFAULT_PUNCTUATION) -> str:
