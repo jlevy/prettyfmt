@@ -1,10 +1,6 @@
 version = 1
 revision = 1
 requires-python = ">=3.10, <4.0"
-resolution-markers = [
-    "python_full_version >= '3.11'",
-    "python_full_version < '3.11'",
-]
 
 [[package]]
 name = "codespell"
@@ -142,8 +138,7 @@ name = "prettyfmt"
 source = { editable = "." }
 dependencies = [
     { name = "humanize" },
-    { name = "strif", version = "2.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "strif", version = "2.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "strif" },
 ]
 
 [package.dev-dependencies]
@@ -158,7 +153,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "humanize", specifier = ">=4.11.0" },
-    { name = "strif", specifier = ">=2.0.0" },
+    { name = "strif", specifier = ">=2.0.2" },
 ]
 
 [package.metadata.requires-dev]
@@ -237,26 +232,11 @@ wheels = [
 
 [[package]]
 name = "strif"
-version = "2.0.0"
+version = "2.0.2"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version < '3.11'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/ed/41b8f80490aff1730bddce8813ec791ccc8b15bc8f0fd20c8081302866cf/strif-2.0.0.tar.gz", hash = "sha256:f3bdf33dd8cdcb4e899313e800ff3f71c842a82cfcfc4359e11b0690020e490e", size = 12749 }
+sdist = { url = "https://files.pythonhosted.org/packages/e1/08/7ad64e5c8c9306fe5dc31fac5789d0f502c7a3a1e8e796739a897f411e64/strif-2.0.2.tar.gz", hash = "sha256:ee68e013c9d18742e99cb5d5819276b87c855bd9d5b74b55f8b2a15a513814e4", size = 26979 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/4c/11c44c316da8edc3e5885e26ecbee62713c41f087e0444a0dc4d6843c7ec/strif-2.0.0-py3-none-any.whl", hash = "sha256:04c8c3f28bb169f6190bace6d7de11b137629c0cc70913a949bff16473290d61", size = 11293 },
-]
-
-[[package]]
-name = "strif"
-version = "2.0.1"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.11'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/ec/e7fb23175bd814572f7e321e2b62ba34e30743d6a9f294d351cf311eb72d/strif-2.0.1.tar.gz", hash = "sha256:c5a9b7f0dd575d9cb9a900e0a98e2b41da9c3e3e373d944a858120854758037d", size = 36778 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/ad/23c158d5460ab362be8a1e2878886d996ded67797cdea94a6868985c8149/strif-2.0.1-py3-none-any.whl", hash = "sha256:a561717c40af4177a8eab3659742a3c7505fd30594fefd11681eca6edcb7d2f3", size = 11563 },
+    { url = "https://files.pythonhosted.org/packages/13/7e/ee486891055d56ce9bcbfd411effad874bbdbd16abab33200ae3d57c49a6/strif-2.0.2-py3-none-any.whl", hash = "sha256:14f820828e27d874bad1d6106250bb1ccc47c0273181f0b4d8c313b195f00edb", size = 11566 },
 ]
 
 [[package]]

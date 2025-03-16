@@ -420,7 +420,7 @@ def fmt_path(path: str | Path, resolve: bool = True) -> str:
     Format a path or filename for display. This quotes it if it contains whitespace,
     using Python conventions: `my long path.txt` is formatted as `'my long path.txt'`.
 
-    :param resolve: If true paths are resolved. If they are within the current working
+    :param resolve: If true, paths are resolved. If they are within the current working
     directory, they are formatted as relative. Otherwise, they are formatted as absolute.
     """
 
