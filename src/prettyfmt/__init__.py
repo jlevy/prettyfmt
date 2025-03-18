@@ -8,6 +8,7 @@ __all__ = (  # noqa: F405
     "abbrev_phrase_in_middle",
     "fmt_age",
     "fmt_time",
+    "fmt_timedelta",
     "fmt_size_human",
     "fmt_size_dual",
     "fmt_words",

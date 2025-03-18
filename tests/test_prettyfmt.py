@@ -14,6 +14,7 @@ from prettyfmt import (
     sanitize_title,
     year,
 )
+from prettyfmt.prettyfmt import fmt_timedelta
 
 
 def test_abbreviate_on_words():
@@ -79,6 +80,20 @@ def test_fmt_words() -> None:
     assert fmt_words("Hello", "   ", "World", sep="---") == "Hello---   ---World"
     assert fmt_words("Hello", "World", sep=" | ") == "Hello | World"
     assert fmt_words(" Hello ", " ", " World ") == " Hello World "
+
+
+def test_fmt_timedelta() -> None:
+    assert fmt_timedelta(0.001, brief=False) == "1 millisecond"
+    assert fmt_timedelta(0.01, brief=False) == "10 milliseconds"
+    assert fmt_timedelta(0.1, brief=False) == "100 milliseconds"
+    assert fmt_timedelta(0.002, brief=False) == "2 milliseconds"
+    assert fmt_timedelta(0.0021111) == "2.11ms"
+    assert fmt_timedelta(0.0021111, sub_seconds=False) == "0s"
+    assert fmt_timedelta(0.0456) == "45.60ms"
+    assert fmt_timedelta(0.12345) == "123ms"
+    assert fmt_timedelta(55.55555) == "56s"
+    assert fmt_timedelta(55.55555, sub_seconds=False) == "56s"
+    assert fmt_timedelta(3333333) == "39d"
 
 
 def test_fmt_age() -> None:

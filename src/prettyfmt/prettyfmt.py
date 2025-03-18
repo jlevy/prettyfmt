@@ -241,23 +241,77 @@ def abbrev_phrase_in_middle(
 ## Some generic formatters that can safely be used for any paths, phrases, timestamps, etc.
 
 
-def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
+def abbrev_time_units(age_str: str) -> str:
     """
-    Format a time delta as a simple age with a single unit, e.g. "2d ago" (brief)
-    or "2 days ago" (not brief).
+    Convert humanize format to brief format.
+    """
+    return (
+        age_str.replace(" microseconds", "µs")
+        .replace(" microsecond", "µs")
+        .replace(" milliseconds", "ms")
+        .replace(" millisecond", "ms")
+        .replace(" seconds", "s")
+        .replace(" second", "s")
+        .replace(" minutes", "m")
+        .replace(" minute", "m")
+        .replace(" hours", "h")
+        .replace(" hour", "h")
+        .replace(" days", "d")
+        .replace(" day", "d")
+        .replace(" weeks", "w")
+        .replace(" week", "w")
+        .replace(" months", "mo")
+        .replace(" month", "mo")
+        .replace(" years", "y")
+        .replace(" year", "y")
+        .replace("a ", "1")  # Convert "a minute" to "1m" etc.
+        .replace(".0", "")  # Remove trailing ".0" (corner case bug in humanize)
+    )
 
-    Unlike `humanize.naturaldelta()`, we use only a single unit (seconds, minutes, hours,
-    days, months, years). We don't use decimals. Conform with typical human usage, and
-    say "33 days" instead of "1 month and 3 days", i.e. use seconds for less than 90 seconds,
-    minutes for less than 90 minutes, hours for less than 2 days, days for less than 2 months,
-    months for less than 2 years.
+
+def fmt_timedelta(
+    value: float | int | timedelta, brief: bool = True, sub_seconds: bool = True
+) -> str:
     """
-    if isinstance(since_time, timedelta):
-        seconds = int(since_time.total_seconds())
+    Format a time delta with a single unit, e.g. "2d" (brief) or "2 days" (not brief).
+
+    Unlike `humanize.naturaldelta()`, we use only a single unit (seconds,
+    minutes, hours, days, months, years) without decimals.
+
+    Conform with typical human usage and say "33 days" instead of "1 month and 3 days",
+    i.e. use seconds for less than 90 seconds, minutes for less than 90 minutes,
+    hours for less than 2 days, days for less than 2 months, months for less
+    than 2 years.
+
+    Defaults to brief format, e.g. "2d" instead of "2 days" and "2ms" instead of
+    "2 milliseconds".
+    """
+    if isinstance(value, float) or isinstance(value, int):
+        delta = timedelta(seconds=value)
+    elif isinstance(value, timedelta):
+        delta = value
     else:
-        seconds = int(since_time)
+        raise ValueError(f"Expected float or timedelta, got {type(value)}: {value}")
 
-    if seconds <= 90:
+    seconds = delta.total_seconds()
+    if not sub_seconds:
+        seconds = int(seconds)
+
+    # Default format
+    format = "%0.0f"
+
+    if sub_seconds and seconds <= 1:
+        suppress = []
+        if seconds < 0.001:  # Less than 1ms, use microseconds
+            min_unit = "microseconds"
+            format = "%0.0f"
+        elif seconds < 0.1:  # Less than 100ms, use 2 decimal places
+            min_unit = "milliseconds"
+            format = "%0.2f"
+        else:  # 100ms to 1s, use 0 decimal places
+            min_unit = "milliseconds"
+            format = "%0.0f"
+    elif seconds <= 90:
         suppress = ["minutes"]
         min_unit = "seconds"
     elif seconds <= 90 * minute:
@@ -276,28 +330,22 @@ def fmt_age(since_time: float | timedelta, brief: bool = False) -> str:
         suppress = []
         min_unit = "years"
 
-    age = precisedelta(seconds, minimum_unit=min_unit, suppress=suppress, format="%0.0f")
+    age = precisedelta(delta, minimum_unit=min_unit, suppress=suppress, format=format)
     if brief:
-        age = (
-            age.replace(" seconds", "s")
-            .replace(" second", "s")
-            .replace(" minutes", "m")
-            .replace(" minute", "m")
-            .replace(" hours", "h")
-            .replace(" hour", "h")
-            .replace(" days", "d")
-            .replace(" day", "d")
-            .replace(" weeks", "w")
-            .replace(" week", "w")
-            .replace(" months", "mo")
-            .replace(" month", "mo")
-            .replace(" years", "y")
-            .replace(" year", "y")
-            .replace("a ", "1")  # Convert "a minute" to "1m" etc.
-            .replace(".0", "")  # Remove trailing ".0" (corner case bug in humanize)
-        )
+        age = abbrev_time_units(age)
 
-    return age + " ago"
+    return age
+
+
+def fmt_age(seconds: float | timedelta, brief: bool = False) -> str:
+    """
+    Format a time delta as an age, e.g. "2 days ago". For seconds through years.
+    See `fmt_timedelta()` for sub-second precision.
+
+    Defaults to long format for time units but set `brief` to get short ages like
+    "2d ago".
+    """
+    return fmt_timedelta(seconds, brief=brief, sub_seconds=False) + " ago"
 
 
 def fmt_time(
