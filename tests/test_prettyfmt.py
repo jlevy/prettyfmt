@@ -7,6 +7,7 @@ from prettyfmt import (
     abbrev_phrase_in_middle,
     day,
     fmt_age,
+    fmt_path,
     fmt_words,
     hour,
     minute,
@@ -168,3 +169,78 @@ def test_dataclass() -> None:
     )
     expected = "MyThing(title='Hello, World!', file_path='~/1234567…', url=https://example.com)"
     assert s == expected
+
+
+def test_fmt_path() -> None:
+    # Basic case - no spaces in path
+    assert fmt_path("path.txt", resolve=False) == "path.txt"
+
+    # Path with spaces
+    assert fmt_path("my long path.txt", resolve=False) == "'my long path.txt'"
+
+    # Test with resolve=False
+    assert fmt_path("/some/path/file.txt", resolve=False) == "/some/path/file.txt"
+
+    # Get actual cwd and home directory
+    cwd = Path.cwd()
+    home = Path.home()
+
+    # Test absolute path gets quoted properly
+    abs_path_with_spaces = Path("/tmp/my test file.txt")
+    assert fmt_path(abs_path_with_spaces, resolve=False) == "'/tmp/my test file.txt'"
+
+    # Test rel_to_cwd parameter
+    # Create a path that's within the current directory
+    rel_file = "test_file.txt"
+    abs_file = cwd / rel_file
+
+    # When rel_to_cwd is True, should show as relative
+    assert fmt_path(abs_file, rel_to_cwd=True, use_tilde=False) == rel_file
+
+    # When rel_to_cwd is False and use_tilde=False, should show as absolute
+    absolute_path = fmt_path(abs_file, rel_to_cwd=False, use_tilde=False)
+    assert rel_file in absolute_path
+    assert absolute_path.startswith("/")  # Should be absolute path
+
+    # Test use_tilde parameter
+    # Create a path within the home directory
+    home_rel_path = "Documents/test_file.txt"
+    home_abs_path = home / home_rel_path
+
+    # When use_tilde is True, should use ~
+    tilde_path = fmt_path(home_abs_path, use_tilde=True, rel_to_cwd=False)
+    assert tilde_path.startswith("~/")
+    assert home_rel_path in tilde_path
+
+    # When use_tilde is False, should show as absolute
+    home_path_str = fmt_path(home_abs_path, use_tilde=False, rel_to_cwd=False)
+    assert home_path_str.startswith("/")
+    assert not home_path_str.startswith("~")
+    assert str(home.name) in home_path_str
+
+    # Test path with spaces in home directory
+    home_path_spaces = home / "Documents/my test file.txt"
+    tilde_path = fmt_path(home_path_spaces, use_tilde=True, rel_to_cwd=False)
+    assert "~/Documents/my test file.txt" in tilde_path
+
+    # Test priority - rel_to_cwd should take precedence over use_tilde
+    # First, make sure we're testing a path within the current directory
+    test_in_cwd = cwd / "priority_test_cwd.txt"
+
+    # rel_to_cwd=True should override use_tilde=True
+    rel_path = fmt_path(test_in_cwd, rel_to_cwd=True, use_tilde=True)
+    assert rel_path == "priority_test_cwd.txt"
+
+    # If the current directory happens to be inside the home directory, we can do additional tests
+    if str(cwd).startswith(str(home)):
+        # CWD is within home directory
+        test_in_home = cwd / "priority_test_home.txt"
+
+        # When rel_to_cwd=False, use_tilde=True, should use tilde notation
+        home_tilde_path = fmt_path(test_in_home, rel_to_cwd=False, use_tilde=True)
+        assert home_tilde_path.startswith("~/")
+
+        # When both flags are False, should be absolute path
+        abs_path = fmt_path(test_in_home, rel_to_cwd=False, use_tilde=False)
+        assert abs_path.startswith("/")
+        assert not abs_path.startswith("~")

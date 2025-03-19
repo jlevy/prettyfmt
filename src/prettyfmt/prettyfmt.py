@@ -463,26 +463,40 @@ def fmt_lines(
     return indent(line_break.join(str(value) for value in values), prefix).rstrip()
 
 
-def fmt_path(path: str | Path, resolve: bool = True) -> str:
+def fmt_path(
+    path: str | Path, resolve: bool = True, rel_to_cwd: bool = True, use_tilde: bool = True
+) -> str:
     """
     Format a path or filename for display. This quotes it if it contains whitespace,
-    using Python conventions: `my long path.txt` is formatted as `'my long path.txt'`.
+    using Python conventions: `path.txt` is unchanged, but `my long path.txt` is
+    formatted as `'my long path.txt'` (with single quotes).
 
-    :param resolve: If true, paths are resolved. If they are within the current working
-    directory, they are formatted as relative. Otherwise, they are formatted as absolute.
+    :param resolve: If true, paths are resolved.
+    :param rel_to_cwd: If true, paths within the current working directory are formatted as relative.
+    :param use_tilde: If true, paths within the user's home directory will
+    be displayed with ~ notation (e.g. ~/Documents instead of /home/user/Documents).
     """
 
-    # TODO: Add a max_len parameter and tools to abbreviate the path in the middle
-    # (preserving outer quotes and any extension).
+    # TODO: Add a max_len parameter (default false) and tools to abbreviate the path
+    # in the middle (preserving outer quotes and any extension).
 
     if resolve:
         path = Path(path).resolve()
-        cwd = Path.cwd().resolve()
-        if path.is_relative_to(cwd):
-            path = path.relative_to(cwd)
-    else:
-        path = Path(path)
 
+        # First, try to make relative to cwd if requested
+        if rel_to_cwd:
+            cwd = Path.cwd().resolve()
+            if path.is_relative_to(cwd):
+                path = path.relative_to(cwd)
+
+        # Then, try to use tilde expansion if requested
+        if use_tilde:
+            home = Path.home().resolve()
+            if path.is_relative_to(home):
+                # Convert to a path with ~ for the home directory
+                path = Path("~") / path.relative_to(home)
+
+    # If we didn't return above, just quote the path.
     return quote_if_needed(str(path))
 
 

@@ -153,7 +153,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "humanize", specifier = ">=4.11.0" },
-    { name = "strif", specifier = ">=2.0.2" },
+    { name = "strif", specifier = ">=2.1.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -232,11 +232,11 @@ wheels = [
 
 [[package]]
 name = "strif"
-version = "2.0.2"
+version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e1/08/7ad64e5c8c9306fe5dc31fac5789d0f502c7a3a1e8e796739a897f411e64/strif-2.0.2.tar.gz", hash = "sha256:ee68e013c9d18742e99cb5d5819276b87c855bd9d5b74b55f8b2a15a513814e4", size = 26979 }
+sdist = { url = "https://files.pythonhosted.org/packages/80/98/7cef4d6fcd9273f209c0b732ef76e972477d906576c27691ac6a9f2dc9f4/strif-2.1.0.tar.gz", hash = "sha256:42b19114e8c5e5763936233b4bb5b3f12d421bb138fcd93fa025ab7361cffea7", size = 27093 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/7e/ee486891055d56ce9bcbfd411effad874bbdbd16abab33200ae3d57c49a6/strif-2.0.2-py3-none-any.whl", hash = "sha256:14f820828e27d874bad1d6106250bb1ccc47c0273181f0b4d8c313b195f00edb", size = 11566 },
+    { url = "https://files.pythonhosted.org/packages/9e/95/579444185a9d0800afb009730ea3a2f9f8835be8e67a1edd161efaa89823/strif-2.1.0-py3-none-any.whl", hash = "sha256:eab5372414e75ffbe2c6ac7faffca691fdeaf2c36b5b012c3b7286f07a3b551c", size = 11679 },
 ]
 
 [[package]]

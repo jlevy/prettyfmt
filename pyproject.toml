@@ -17,7 +17,7 @@ requires-python = ">=3.10,<4.0"
 dynamic = ["version"]
 
 dependencies = [
-    "strif>=2.0.2",
+    "strif>=2.1.0",
     "humanize>=4.11.0",
 ]
 
