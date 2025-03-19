@@ -189,7 +189,7 @@ def abbrev_on_words(text: str, max_len: int = 64, indicator: str = "…") -> str
 
 
 def abbrev_phrase_in_middle(
-    phrase: str, max_len: int = 64, ellipsis="…", max_trailing_len: int = 0
+    phrase: str, max_len: int = 64, ellipsis: str = "…", max_trailing_len: int = 0
 ) -> str:
     """
     Abbreviate a phrase to a maximum character length, preserving the first and last
@@ -420,7 +420,7 @@ def fmt_words(*words: str | None, sep: str = " ") -> str:
     if not word_list:
         return ""
 
-    processed_words = []
+    processed_words: list[str] = []
 
     sep_starts_with_space = sep.startswith(" ")
     sep_ends_with_space = sep.endswith(" ")

@@ -148,7 +148,7 @@ def test_dataclass() -> None:
         url: str
         body: str
 
-        def __str__(self) -> str:
+        def __str__(self) -> str:  # pyright: ignore[reportImplicitOverride]
             return abbrev_obj(
                 self,
                 # Put an abbreviated title first, then the file path, then the url.
