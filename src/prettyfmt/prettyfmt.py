@@ -488,8 +488,9 @@ def fmt_path(
             cwd = Path.cwd().resolve()
             if path.is_relative_to(cwd):
                 path = path.relative_to(cwd)
+                return quote_if_needed(str(path))
 
-        # Then, try to use tilde expansion if requested
+        # Otherwise, try to use tilde expansion if requested
         if use_tilde:
             home = Path.home().resolve()
             if path.is_relative_to(home):

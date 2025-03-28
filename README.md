@@ -14,12 +14,9 @@ It's <500 lines of code with just two dependencies:
 
 ## Installation
 
-```
-# Use pip
-pip install prettyfmt
-# Or poetry
-poetry add prettyfmt
-```
+Add the [`prettyfmt`](https://pypi.org/project/prettyfmt/) package to your environment
+in the usual way with `pip install prettyfmt`, `poetry add prettyfmt`, or `uv add
+prettyfmt`.
 
 ## Usage
 
@@ -127,8 +124,8 @@ class MyThing:
             },
       )
 
-str(MyThing(file_path="/tmp/file.txt", title="Something" + "blah " * 50, url="https://www.example.com", body="..."))
-# -> "MyThing(title='Somethingblah blah blah blah blah blah blah blah blah blah blah…', file_path=/tmp/file.txt, url=https://www.example.com)"
+str(MyThing(file_path="/tmp/file.txt", title="Something " + "blah " * 50, url="https://www.example.com", body="..."))
+# -> "MyThing(title='Something blah blah blah blah blah blah blah blah blah blah blah…', file_path=/tmp/file.txt, url=https://www.example.com)"
 ```
 
 * * *
