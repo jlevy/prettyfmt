@@ -4,6 +4,7 @@
 [project.urls]
 Repository = "https://github.com/jlevy/prettyfmt"
 # Homepage = "https://..."
+# Documentation = "https://..."
 
 [project]
 name = "prettyfmt"
@@ -16,10 +17,34 @@ license = "MIT"
 requires-python = ">=3.10,<4.0"
 dynamic = ["version"]
 
+classifiers = [
+    # Adjust as needed:
+    "Development Status :: 4 - Beta",
+    # "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+    # Include this to avoid accidentally publishing to PyPI:
+    # "Private :: Do Not Upload",
+]
+
+
+# ---- Main dependencies ----
+
 dependencies = [
     "strif>=2.1.0",
     "humanize>=4.11.0",
 ]
+
+
+# ---- Dev dependencies ----
 
 [dependency-groups]
 dev = [
@@ -31,9 +56,8 @@ dev = [
     "funlog>=0.2.0",
 ]
 
-[project.scripts]
+# [project.scripts]
 # Add script entry points here.
-# prettyfmt = "prettyfmt:main"
 
 
 # ---- Build system ----
@@ -56,44 +80,74 @@ vcs = "git"
 style = "pep440"
 bump = "true"
 
+[tool.hatch.build.targets.wheel]
+# The source location for the package.
+packages = ["src/prettyfmt"]
+
 
 # ---- Settings ----
 
 [tool.ruff]
+# Set as desired, typically 88 (black standard) or 100 (wide).
 line-length = 100
 
 [tool.ruff.lint]
+# See: https://docs.astral.sh/ruff/rules/
 select = [
-    "E", # pycodestyle
-    "F", # Pyflakes
-    "UP", # pyupgrade   
-    "B", # flake8-bugbear
-    "I", # isort
-    # "SIM", # flake8-simplify
+    # Basic list from: https://docs.astral.sh/ruff/linter/#rule-selection
+    "E", # https://docs.astral.sh/ruff/rules/#error-e
+    "F", # https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "UP", # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "B", # https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "I", # https://docs.astral.sh/ruff/rules/#isort-i
+    # Other possibilities:
+    # "D" # https://docs.astral.sh/ruff/rules/#pydocstyle-d
+    # "Q" # https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+    # "COM" # https://docs.astral.sh/ruff/rules/#flake8-commas-com
+    # "SIM", # https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+
 ]
 ignore = [
     "E501", # https://docs.astral.sh/ruff/rules/line-too-long/
     "E402", # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file/
     "E731", # https://docs.astral.sh/ruff/rules/lambda-assignment/
+    # We use both ruff formatter and linter so some rules should always be disabled.
+    # See: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191", # https://docs.astral.sh/ruff/rules/tab-indentation/
+    "E111", # https://docs.astral.sh/ruff/rules/indentation-with-invalid-multiple/
+    "E114", # https://docs.astral.sh/ruff/rules/indentation-with-invalid-multiple-comment/
+    "E117", # https://docs.astral.sh/ruff/rules/over-indented/
+    "D206", # https://docs.astral.sh/ruff/rules/docstring-tab-indentation/
+    "D300", # https://docs.astral.sh/ruff/rules/triple-single-quotes/
+    "Q000", # https://docs.astral.sh/ruff/rules/bad-quotes-inline-string/
+    "Q001", # https://docs.astral.sh/ruff/rules/bad-quotes-multiline-string/
+    "Q002", # https://docs.astral.sh/ruff/rules/bad-quotes-docstring/
+    "Q003", # https://docs.astral.sh/ruff/rules/avoidable-escaped-quote/
+    "COM812", # https://docs.astral.sh/ruff/rules/missing-trailing-comma/
+    "COM819", # https://docs.astral.sh/ruff/rules/prohibited-trailing-comma/
+    "ISC002", # https://docs.astral.sh/ruff/rules/multi-line-implicit-string-concatenation/
 ]
 
-
-[tool.mypy]
-disable_error_code = [
-    "import-untyped",
-]
-
+# BasedPyright currently seems like the best type checker option, much faster
+# than mypy and with a good extension for VSCode/Cursor.
+# https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright
+# https://docs.basedpyright.com/latest/configuration/config-files/#sample-pyprojecttoml-file
 [tool.basedpyright]
 include = ["src", "tests", "devtools"]
-reportMissingImports = false
-reportUnusedCallResult = false
-reportUnnecessaryIsInstance = false
-reportUnreachable = false
-reportAny = false
-reportExplicitAny = false
-reportUnknownVariableType = false
-reportUnknownArgumentType = false
+# Make ignoring type warnings easier:
+reportIgnoreCommentWithoutRule = false
+reportUnnecessaryTypeIgnoreComment = false
+# A few typically noisy warnings, comment/uncomment as desired:
 reportMissingTypeStubs = false
+reportUnusedCallResult = false
+# reportMissingImports = false
+# reportUnnecessaryIsInstance = false
+# reportUnreachable = false
+# reportAny = false
+# reportExplicitAny = false
+# reportUnknownVariableType = false
+# reportUnknownArgumentType = false
+
 
 [tool.codespell]
 # ignore-words-list = "foo,bar"

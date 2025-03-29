@@ -128,6 +128,8 @@ str(MyThing(file_path="/tmp/file.txt", title="Something " + "blah " * 50, url="h
 # -> "MyThing(title='Something blah blah blah blah blah blah blah blah blah blah blah…', file_path=/tmp/file.txt, url=https://www.example.com)"
 ```
 
+For instructions on publishing to PyPI, see [publishing.md](publishing.md).
+
 * * *
 
 *This project was built from
