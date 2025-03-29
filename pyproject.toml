@@ -141,10 +141,10 @@ reportUnnecessaryTypeIgnoreComment = false
 reportMissingTypeStubs = false
 reportUnusedCallResult = false
 # reportMissingImports = false
-# reportUnnecessaryIsInstance = false
-# reportUnreachable = false
-# reportAny = false
-# reportExplicitAny = false
+reportUnnecessaryIsInstance = false
+reportUnreachable = false
+reportAny = false
+reportExplicitAny = false
 # reportUnknownVariableType = false
 # reportUnknownArgumentType = false
 

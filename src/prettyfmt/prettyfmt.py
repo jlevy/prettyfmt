@@ -136,7 +136,9 @@ def abbrev_obj(
     visited.add(id(value))
 
     if isinstance(value, list):
-        truncated_list = value[:list_max_len] + (["…"] if len(value) > list_max_len else [])
+        truncated_list: list[Any] = value[:list_max_len] + (
+            ["…"] if len(value) > list_max_len else []  # pyright: ignore
+        )
         return (
             "["
             + ", ".join(
@@ -157,7 +159,7 @@ def abbrev_obj(
         )
 
     if isinstance(value, dict):
-        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"
+        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"  # pyright: ignore
 
     if isinstance(value, Enum):
         return value.name
