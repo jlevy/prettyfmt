@@ -5,12 +5,13 @@ representations slightly more beautiful.
 
 It offers simple but general functions for formatting and abbreviating objects and
 dataclasses, dicts, words and phrases, filenames, titles, long strings, timestamps,
-ages, and sizes.
+ages, and sizes. It also has Unicode-friendly multilingual slugify functions.
 
 It won't bloat your project.
-It's <500 lines of code with just two dependencies:
-[`humanize`](https://github.com/python-humanize/humanize) and
-[`strif`](https://github.com/jlevy/strif).
+It's <500 lines of code with just three dependencies:
+[`humanize`](https://github.com/python-humanize/humanize),
+[`strif`](https://github.com/jlevy/strif), and
+[`text-unidecode`](https://github.com/kmike/text-unidecode).
 
 ## Installation
 
@@ -54,10 +55,23 @@ ugly_title = "A  Very\tVery Very Needlessly Long  {Strange} Document Title [fina
 abbrev_phrase_in_middle(sanitize_title(ugly_title))
 # -> 'A Very Very Very Needlessly Long Strange … final edited draft23'
 
-# Then you can slugify to get nice filenames or URLs.
-from slugify import slugify
-slugify(abbrev_phrase_in_middle(sanitize_title(ugly_title)))
-# -> 'a-very-very-very-needlessly-long-strange-final-edited-draft23'
+# You can convert strings to cleaner titles:
+ugly_title = "A  Very\tVery Very Needlessly Long  {Strange} Document Title [final edited draft23]"
+sanitized = sanitize_title(ugly_title)
+# -> 'A Very Very Very Needlessly Long Strange Document Title final edited draft23'
+
+# Underscore and dash slugify based on this:
+slugify_snake("Crème Brûlée Recipe & Notes")
+# -> 'crème_brûlée_recipe_notes'
+
+slugify_snake("Crème Brûlée Recipe & Notes", ascii=True)
+# -> 'creme_brulee_recipe_notes'
+
+slugify_kebab("你好世界 Hello World")
+# -> '你好世界-hello-world'
+
+slugify_kebab("你好世界 Hello World", ascii=True)
+# -> 'ni-hao-shi-jie-hello-world'
 
 # Formatting durations. Good for logging runtimes:
 fmt_timedelta(3.33333)

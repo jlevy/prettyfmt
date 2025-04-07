@@ -14,7 +14,10 @@ __all__ = (  # noqa: F405
     "fmt_words",
     "fmt_paras",
     "sanitize_title",
-    # Re-export strif functions for convenience:
+    "slugify_snake",
+    "slugify_kebab",
+    "unicode_to_ascii",
+    # Re-export strif functions just for convenience:
     "abbrev_str",
     "abbrev_list",
     "single_line",

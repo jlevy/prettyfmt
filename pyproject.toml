@@ -41,6 +41,7 @@ classifiers = [
 dependencies = [
     "strif>=2.1.0",
     "humanize>=4.11.0",
+    "text-unidecode>=1.3",
 ]
 
 

@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from collections.abc import Callable, Iterable
 from dataclasses import fields, is_dataclass
 from datetime import datetime, timedelta, timezone
@@ -506,7 +507,9 @@ def fmt_path(
 DEFAULT_PUNCTUATION = ",./:;'!?/@%&()+…–—-"
 
 
-def sanitize_title(text: str, allowed_chars: str = DEFAULT_PUNCTUATION) -> str:
+def sanitize_title(
+    text: str, allowed_chars: str = DEFAULT_PUNCTUATION, space_replacement: str = " "
+) -> str:
     """
     Simple sanitization for arbitrary text to make it suitable for a title or filename.
     Convert all whitespace to spaces. By default allows the most common punctuation,
@@ -516,4 +519,45 @@ def sanitize_title(text: str, allowed_chars: str = DEFAULT_PUNCTUATION) -> str:
     # If we had the regex package on hand we could use \p{L}\p{N} instead of \w\d
     # but probably not worth the import.
     escaped_chars = re.escape(allowed_chars)
-    return re.sub(r"[^\w\d" + escaped_chars + "]+", " ", text).strip()
+    return re.sub(r"[^\w\d" + escaped_chars + "]+", space_replacement, text).strip(
+        space_replacement
+    )
+
+
+def sanitize_str(text: str, space_replacement: str = " ") -> str:
+    """
+    Sanitize a string to make it suitable for a title or filename.
+    Passes through all `[\\w\\d]` chars only, replaces all other chars with `space_replacement`.
+    """
+    return sanitize_title(text, allowed_chars="", space_replacement=space_replacement)
+
+
+def unicode_to_ascii(text: str) -> str:
+    """
+    Conversion of unicode text to ASCII by decomposing unicode chars.
+    This is the same as python-slugify:
+    https://github.com/un33k/python-slugify
+    """
+    import text_unidecode as unidecode
+
+    return unidecode.unidecode(unicodedata.normalize("NFKD", text))  # pyright: ignore
+
+
+def slugify_snake(text: str, ascii: bool = False) -> str:
+    """
+    Convert a string to a slug, using underscores as word separators. If `ascii` is true,
+    does a simple ASCII conversion ('café' becomes 'cafe').
+    """
+    if ascii:
+        text = unicode_to_ascii(text)
+    return sanitize_str(text, space_replacement="_").lower()
+
+
+def slugify_kebab(text: str, ascii: bool = False) -> str:
+    """
+    Convert a string to a slug, using dashes as word separators and replacing underscores
+    with dashes. If `ascii` is true, does a simple ASCII conversion ('café' becomes 'cafe').
+    """
+    if ascii:
+        text = unicode_to_ascii(text)
+    return sanitize_str(text, space_replacement="-").replace("_", "-").lower()

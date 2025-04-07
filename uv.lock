@@ -132,6 +132,7 @@ source = { editable = "." }
 dependencies = [
     { name = "humanize" },
     { name = "strif" },
+    { name = "text-unidecode" },
 ]
 
 [package.dev-dependencies]
@@ -148,6 +149,7 @@ dev = [
 requires-dist = [
     { name = "humanize", specifier = ">=4.11.0" },
     { name = "strif", specifier = ">=2.1.0" },
+    { name = "text-unidecode", specifier = ">=1.3" },
 ]
 
 [package.metadata.requires-dev]
@@ -232,6 +234,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/80/98/7cef4d6fcd9273f209c0b732ef76e972477d906576c27691ac6a9f2dc9f4/strif-2.1.0.tar.gz", hash = "sha256:42b19114e8c5e5763936233b4bb5b3f12d421bb138fcd93fa025ab7361cffea7", size = 27093 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/95/579444185a9d0800afb009730ea3a2f9f8835be8e67a1edd161efaa89823/strif-2.1.0-py3-none-any.whl", hash = "sha256:eab5372414e75ffbe2c6ac7faffca691fdeaf2c36b5b012c3b7286f07a3b551c", size = 11679 },
+]
+
+[[package]]
+name = "text-unidecode"
+version = "1.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ab/e2/e9a00f0ccb71718418230718b3d900e71a5d16e701a3dae079a21e9cd8f8/text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93", size = 76885 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a6/a5/c0b6468d3824fe3fde30dbb5e1f687b291608f9473681bbf7dabbf5a87d7/text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8", size = 78154 },
 ]
 
 [[package]]

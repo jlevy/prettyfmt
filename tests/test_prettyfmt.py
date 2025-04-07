@@ -12,7 +12,11 @@ from prettyfmt import (
     hour,
     minute,
     month,
+    sanitize_str,
     sanitize_title,
+    slugify_kebab,
+    slugify_snake,
+    unicode_to_ascii,
     year,
 )
 from prettyfmt.prettyfmt import fmt_timedelta
@@ -244,3 +248,101 @@ def test_fmt_path() -> None:
         abs_path = fmt_path(test_in_home, rel_to_cwd=False, use_tilde=False)
         assert abs_path.startswith("/")
         assert not abs_path.startswith("~")
+
+
+def test_sanitize_str():
+    assert sanitize_str("Hello, World!") == "Hello World"
+    assert sanitize_str("test@example.com") == "test example com"
+    assert sanitize_str("  spaces  ") == "spaces"
+    assert sanitize_str("über café") == "über café"
+    assert sanitize_str("你好世界") == "你好世界"
+    assert sanitize_str("$#@!%^&*()") == ""
+    assert sanitize_str("mixed_-symbols&&chars") == "mixed_ symbols chars"
+
+
+def test_slugify_snake():
+    assert slugify_snake("Hello World!") == "hello_world"
+    assert slugify_snake("Test-Case") == "test_case"
+    assert slugify_snake("  Multiple   Spaces  ") == "multiple_spaces"
+    assert slugify_snake("über café") == "über_café"
+    assert slugify_snake("你好世界") == "你好世界"
+    assert slugify_snake("email@domain.com") == "email_domain_com"
+    assert slugify_snake("$price = 99.99") == "price_99_99"
+
+
+def test_slugify_kebab():
+    assert slugify_kebab("Hello World!") == "hello-world"
+    assert slugify_kebab("Test_Case") == "test-case"
+    assert slugify_kebab("  Multiple   Spaces  ") == "multiple-spaces"
+    assert slugify_kebab("über café") == "über-café"
+    assert slugify_kebab("你好世界") == "你好世界"
+    assert slugify_kebab("email@domain.com") == "email-domain-com"
+    assert slugify_kebab("$price = 99.99") == "price-99-99"
+
+
+def test_unicode_to_ascii():
+    assert unicode_to_ascii("Héllø") == "Hello"
+    assert unicode_to_ascii("你好世界") == "Ni Hao Shi Jie "
+    assert unicode_to_ascii("Σὲ γνωρίζω") == "Se gnorizo"
+
+    assert unicode_to_ascii("über café") == "uber cafe"
+    assert unicode_to_ascii("Crème Brûlée") == "Creme Brulee"
+    assert unicode_to_ascii("Erdős-Rényi") == "Erdos-Renyi"
+    assert unicode_to_ascii("ąćęłńóśźż ĄĆĘŁŃÓŚŹŻ") == "acelnoszz ACELNOSZZ"
+
+
+def test_slugify_snake_with_ascii():
+    # Test existing behavior is preserved
+    assert slugify_snake("Hello World!") == "hello_world"
+    assert slugify_snake("Test-Case") == "test_case"
+    assert slugify_snake("  Multiple   Spaces  ") == "multiple_spaces"
+
+    # Test unicode handling with ascii=False (default)
+    assert slugify_snake("über café") == "über_café"
+    assert slugify_snake("你好世界") == "你好世界"
+
+    # Test with ascii=True
+    assert slugify_snake("über café", ascii=True) == "uber_cafe"
+    assert slugify_snake("你好世界", ascii=True) == "ni_hao_shi_jie"
+    assert slugify_snake("Crème Brûlée", ascii=True) == "creme_brulee"
+    assert slugify_snake("Hello World!", ascii=True) == "hello_world"
+    assert slugify_snake("Test-Case", ascii=True) == "test_case"
+
+
+def test_slugify_kebab_with_ascii():
+    # Test existing behavior is preserved
+    assert slugify_kebab("Hello World!") == "hello-world"
+    assert slugify_kebab("Test_Case") == "test-case"
+    assert slugify_kebab("  Multiple   Spaces  ") == "multiple-spaces"
+
+    # Test unicode handling with ascii=False (default)
+    assert slugify_kebab("über café") == "über-café"
+    assert slugify_kebab("你好世界") == "你好世界"
+
+    # Test with ascii=True
+    assert slugify_kebab("über café", ascii=True) == "uber-cafe"
+    assert slugify_kebab("你好世界", ascii=True) == "ni-hao-shi-jie"
+    assert slugify_kebab("Crème Brûlée", ascii=True) == "creme-brulee"
+    assert slugify_kebab("Hello World!", ascii=True) == "hello-world"
+    assert slugify_kebab("Test_Case", ascii=True) == "test-case"
+
+
+def test_readme_examples():
+    # Test the examples from the README
+    ugly_title = (
+        "A  Very\tVery Very Needlessly Long  {Strange} Document Title [final edited draft23]"
+    )
+    sanitized = sanitize_title(ugly_title)
+    assert (
+        sanitized == "A Very Very Very Needlessly Long Strange Document Title final edited draft23"
+    )
+
+    abbreviated = abbrev_phrase_in_middle(sanitize_title(ugly_title))
+    assert abbreviated == "A Very Very Very Needlessly Long Strange … final edited draft23"
+
+    # Test the slugified version with our new functions
+    snake_slug = slugify_snake(abbreviated, ascii=True)
+    assert snake_slug == "a_very_very_very_needlessly_long_strange_final_edited_draft23"
+
+    kebab_slug = slugify_kebab(abbreviated, ascii=True)
+    assert kebab_slug == "a-very-very-very-needlessly-long-strange-final-edited-draft23"
