@@ -257,7 +257,12 @@ def test_sanitize_str():
     assert sanitize_str("über café") == "über café"
     assert sanitize_str("你好世界") == "你好世界"
     assert sanitize_str("$#@!%^&*()") == ""
-    assert sanitize_str("mixed_-symbols&&chars") == "mixed_ symbols chars"
+    assert sanitize_str("mixed_-symbols&&chars") == "mixed symbols chars"
+    assert sanitize_str("mixed___symbols---chars--") == "mixed symbols chars"
+    assert sanitize_str("under_score_names") == "under score names"
+    assert sanitize_str("under_score_names", space_replacement="-") == "under-score-names"
+    assert sanitize_str("under_score_names", space_replacement="") == "underscorenames"
+    assert sanitize_str("under_score_names", allowed_chars="_") == "under_score_names"
 
 
 def test_slugify_snake():
@@ -268,6 +273,14 @@ def test_slugify_snake():
     assert slugify_snake("你好世界") == "你好世界"
     assert slugify_snake("email@domain.com") == "email_domain_com"
     assert slugify_snake("$price = 99.99") == "price_99_99"
+    assert (
+        slugify_snake("Topics in I//O and  Audio Streams: A Technical Overview   (with examples)")
+        == "topics_in_i_o_and_audio_streams_a_technical_overview_with_examples"
+    )
+    assert (
+        slugify_snake("~/Downloads/Post-Quantum Cryptography_ In-Depth Overview_.docx")
+        == "downloads_post_quantum_cryptography_in_depth_overview_docx"
+    )
 
 
 def test_slugify_kebab():

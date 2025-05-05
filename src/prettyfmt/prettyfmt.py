@@ -512,24 +512,27 @@ def sanitize_title(
 ) -> str:
     """
     Simple sanitization for arbitrary text to make it suitable for a title or filename.
-    Convert all whitespace to spaces. By default allows the most common punctuation,
-    letters, and numbers, but not Markdown chars like `*` or `[]`, code characters, etc.
+    Convert all whitespace to spaces. By default, allows the most common punctuation,
+    letters, and numbers, but not Markdown chars like `*` or `[]`, code characters,
+    or underscores.
     """
     # Note \w and \d should now be pretty good for common Unicode letters and digits.
     # If we had the regex package on hand we could use \p{L}\p{N} instead of \w\d
     # but probably not worth the import.
-    escaped_chars = re.escape(allowed_chars)
-    return re.sub(r"[^\w\d" + escaped_chars + "]+", space_replacement, text).strip(
-        space_replacement
-    )
+    forbidden_chars = re.escape(allowed_chars)
+    if "_" in allowed_chars:
+        new_text = re.sub(r"([^\w\d" + forbidden_chars + "])+", space_replacement, text)
+    else:
+        new_text = re.sub(r"(_|[^\w\d" + forbidden_chars + "])+", space_replacement, text)
+    return new_text.strip(space_replacement)
 
 
-def sanitize_str(text: str, space_replacement: str = " ") -> str:
+def sanitize_str(text: str, allowed_chars: str = "", space_replacement: str = " ") -> str:
     """
     Sanitize a string to make it suitable for a title or filename.
     Passes through all `[\\w\\d]` chars only, replaces all other chars with `space_replacement`.
     """
-    return sanitize_title(text, allowed_chars="", space_replacement=space_replacement)
+    return sanitize_title(text, allowed_chars=allowed_chars, space_replacement=space_replacement)
 
 
 def unicode_to_ascii(text: str) -> str:
