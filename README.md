@@ -14,6 +14,11 @@ It's <500 lines of code with minimal dependencies:
 [`pluralizer-py`](https://github.com/weixu365/pluralizer-py) and
 [`strif`](https://github.com/jlevy/strif).
 
+Note the pluralization is for English and fast to import, unlike larger libraries like
+[`inflect`](https://github.com/jaraco/inflect).
+The two slugification functions are just simple near-equivalents of
+[`python-slugify`](https://github.com/un33k/python-slugify).
+
 ## Installation
 
 Add the [`prettyfmt`](https://pypi.org/project/prettyfmt/) package to your environment
