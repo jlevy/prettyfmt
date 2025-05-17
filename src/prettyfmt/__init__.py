@@ -1,8 +1,11 @@
 from strif import abbrev_list, abbrev_str, quote_if_needed, single_line
 
+from .plurals import fmt_count_items, plural
 from .prettyfmt import *  # noqa: F403
 
 __all__ = (  # noqa: F405
+    "plural",
+    "fmt_count_items",
     "abbrev_obj",
     "abbrev_on_words",
     "abbrev_phrase_in_middle",

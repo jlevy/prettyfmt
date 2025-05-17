@@ -8,21 +8,23 @@ dataclasses, dicts, words and phrases, filenames, titles, long strings, timestam
 ages, and sizes. It also has Unicode-friendly multilingual slugify functions.
 
 It won't bloat your project.
-It's <500 lines of code with just three dependencies:
+It's <500 lines of code with minimal dependencies:
 [`humanize`](https://github.com/python-humanize/humanize),
-[`strif`](https://github.com/jlevy/strif), and
-[`text-unidecode`](https://github.com/kmike/text-unidecode).
+[`text-unidecode`](https://github.com/kmike/text-unidecode), and the very small
+[`pluralizer-py`](https://github.com/weixu365/pluralizer-py) and
+[`strif`](https://github.com/jlevy/strif).
 
 ## Installation
 
 Add the [`prettyfmt`](https://pypi.org/project/prettyfmt/) package to your environment
-in the usual way with `pip install prettyfmt`, `poetry add prettyfmt`, or `uv add
-prettyfmt`.
+in the usual way (`uv add prettyfmt`, `poetry add prettyfmt`, or `pip install
+prettyfmt`).
 
 ## Usage
 
-See [pydoc](https://github.com/jlevy/prettyfmt/blob/main/src/prettyfmt/prettyfmt.py) for
-details on all functions.
+See
+[docstrings](https://github.com/jlevy/prettyfmt/blob/main/src/prettyfmt/prettyfmt.py)
+for details on all functions.
 
 ```python
 
@@ -99,6 +101,17 @@ fmt_age(60 * 60 * 24 * 33)
 
 fmt_age(60 * 60 * 24 * 33, brief=True)
 # -> '33d ago'
+
+# Use fast lazy import of the minimal pluralizer library.
+plural(2, "banana")
+# -> 'bananas'
+
+# Simple plurals.
+fmt_count_items(23, "banana")
+# -> '23 bananas'
+
+fmt_count_items(1, "banana")
+# -> '1 banana'
 
 # Sizes
 fmt_size_human(12000000)

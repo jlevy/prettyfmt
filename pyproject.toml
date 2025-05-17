@@ -38,9 +38,10 @@ classifiers = [
 # ---- Main dependencies ----
 
 dependencies = [
-    "strif>=2.1.0",
+    "strif>=3.0.1",
     "humanize>=4.11.0",
     "text-unidecode>=1.3",
+    "pluralizer>=1.2.0",
 ]
 
 
@@ -145,7 +146,7 @@ reportUnnecessaryIsInstance = false
 reportUnreachable = false
 reportAny = false
 reportExplicitAny = false
-# reportUnknownVariableType = false
+reportUnknownVariableType = false
 # reportUnknownArgumentType = false
 
 
