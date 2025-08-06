@@ -56,6 +56,7 @@ def _format_kvs(
     field_max_len: int,
     key_filter: KeyFilter | None = None,
     value_filter: Callable[[Any], bool] | None = None,
+    visited: set[Any] | None = None,
 ) -> str:
     filtered_items: list[tuple[Any, Any]] = []
     for k, v in items:
@@ -76,6 +77,7 @@ def _format_kvs(
                         field_max_len,
                         key_filter=key_filter,
                         value_filter=value_filter,
+                        visited=visited,
                     ),
                 )
             )
@@ -155,12 +157,12 @@ def abbrev_obj(
         value_dict = {f.name: getattr(value, f.name) for f in fields(value)}
         return (
             f"{name}("
-            + _format_kvs(value_dict.items(), field_max_len, key_filter, value_filter)
+            + _format_kvs(value_dict.items(), field_max_len, key_filter, value_filter, visited)
             + ")"
         )
 
     if isinstance(value, dict):
-        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter) + "}"  # pyright: ignore
+        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter, visited) + "}"  # pyright: ignore
 
     if isinstance(value, Enum):
         return value.name
