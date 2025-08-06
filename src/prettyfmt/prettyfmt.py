@@ -162,7 +162,9 @@ def abbrev_obj(
         )
 
     if isinstance(value, dict):
-        return "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter, visited) + "}"  # pyright: ignore
+        return (
+            "{" + _format_kvs(value.items(), field_max_len, key_filter, value_filter, visited) + "}"  # pyright: ignore
+        )
 
     if isinstance(value, Enum):
         return value.name

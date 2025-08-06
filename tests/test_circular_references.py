@@ -89,11 +89,11 @@ def test_multiple_circular_references():
     d1 = {"id": "d1"}
     d2 = {"id": "d2"}
     d3 = {"id": "d3"}
-    
+
     d1["refs"] = [d2, d3]  # pyright: ignore
     d2["refs"] = [d1, d3]  # pyright: ignore
     d3["refs"] = [d1, d2]  # pyright: ignore
-    
+
     result = abbrev_obj(d1)
     assert "<circular reference>" in result
     assert "id=d1" in result
